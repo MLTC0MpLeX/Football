@@ -286,3 +286,4 @@ C:\Users\mscerri\RiderProjects\Football\Football\obj\Debug\net8.0\refint\Footbal
 C:\Users\mscerri\RiderProjects\Football\Football\obj\Debug\net8.0\Football.pdb
 C:\Users\mscerri\RiderProjects\Football\Football\obj\Debug\net8.0\Football.genruntimeconfig.cache
 C:\Users\mscerri\RiderProjects\Football\Football\obj\Debug\net8.0\ref\Football.dll
+C:\Users\mscerri\RiderProjects\Football\Football\obj\Debug\net8.0\Football.sourcelink.json

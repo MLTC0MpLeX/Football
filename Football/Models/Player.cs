@@ -8,6 +8,6 @@ public class Player
     public string? LastUpdated { get; set; }
     public string? Nationality { get; set; }
     public string? Position { get; set; }
-    public int PlayerMatched { get; set; }
+    public int Apps { get; set; }
     public int GoalCount { get; set; }
 }

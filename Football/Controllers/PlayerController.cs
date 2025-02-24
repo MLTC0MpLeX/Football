@@ -6,8 +6,8 @@ using Football.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Football.Models;
 using Newtonsoft.Json;
+
  
 namespace FootballAPI.Controllers
 {
@@ -49,6 +49,10 @@ namespace FootballAPI.Controllers
                 //save the data in the DB to cache locally the retrieved data
                 _context.Players.Add(player);
                 await _context.SaveChangesAsync();
+                
+                player = await RetrievePlayerStatsFromAPI(player);
+                
+                
  
                 return player;
             }
@@ -162,6 +166,55 @@ namespace FootballAPI.Controllers
             {
                 Console.WriteLine($"Exception Occured {ex.Message}");
                 return null;
+            }
+        }
+        
+        private async Task<Player> RetrievePlayerStatsFromAPI(Player player)
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(
+                    HttpMethod.Get,
+                    "http://api.football-data.org/v4/competitions/PL/scorers");
+ 
+                request.Headers.Add("X-Auth-Token", "df9f64b5f9e440fd8b2c6865a1888ef0");
+ 
+                using var response = await _httpClient.SendAsync(request);
+ 
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Error retrieving player stats {response.StatusCode}");
+                }
+ 
+                var json = await response.Content.ReadAsStringAsync();
+ 
+                var stats = JsonConvert.DeserializeObject<GoalsDTO>(json);
+ 
+                if(stats == null)
+                {
+                    Console.WriteLine("Failed to deserialize player stats");
+ 
+                    return player;
+                }
+                
+                var playerStats = stats.Scorers.FirstOrDefault(s => s.Player.Id == player.Id);
+ 
+                if(playerStats == null)
+                {
+                    Console.WriteLine("Player not found in stats");
+ 
+                    return player;
+                }
+ 
+                player.Apps = playerStats.Appearances;
+                player.GoalCount = playerStats.Goals;
+ 
+                return player;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Exception Occured {ex.Message}");
+                return player;
             }
         }
     }
